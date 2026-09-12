@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Amma Simulator 😂</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+Malayalam:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Fredoka', Arial, sans-serif;
+            background: linear-gradient(
+                135deg,
+                #ffe4ec,
+                #fff4d6,
+                #e5f4ff
+            );
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(214, 51, 108, 0.12), 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Funny Stickers with gentle float animation */
+        .sticker {
+            position: absolute;
+            font-size: 35px;
+            user-select: none;
+            pointer-events: none;
+            animation: floatSlow 3.5s ease-in-out infinite alternate;
+        }
+
+        .s1 { top: 20px; left: 25px; animation-delay: 0s; }
+        .s2 { top: 20px; right: 25px; animation-delay: 0.8s; }
+        .s3 { bottom: 20px; left: 25px; animation-delay: 1.6s; }
+        .s4 { bottom: 20px; right: 25px; animation-delay: 2.4s; }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(0px) rotate(-4deg); }
+            100% { transform: translateY(-8px) rotate(4deg); }
+        }
+
+        h1 {
+            color: #d6336c;
+            font-size: 38px;
+            margin: 10px 0 5px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 18px;
+            margin: 0 0 25px;
+        }
+
+        /* Characters section */
+        .characters {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 230px;
+            padding: 25px 20px;
+            background: #fff8fb;
+            border-radius: 25px;
+            border: 2px solid #ffe3ec;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(214, 51, 108, 0.15);
+        }
+
+        .emoji {
+            font-size: 70px;
+            line-height: 1;
+            margin-bottom: 10px;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover .emoji {
+            transform: scale(1.1);
+        }
+
+        .card h2 {
+            color: #444;
+            font-size: 22px;
+            margin: 5px 0;
+        }
+
+        .card p {
+            color: #777;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        /* Actions & Controls */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Start Button with rich styling */
+        .start-btn {
+            background: linear-gradient(135deg, #d6336c, #ff6b8b);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(214, 51, 108, 0.35);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(214, 51, 108, 0.45);
+            background: linear-gradient(135deg, #c2255c, #fa5252);
+        }
+
+        .start-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);
+        }
+
+        .start-btn.running {
+            background: linear-gradient(135deg, #20c997, #0ca678);
+            box-shadow: 0 8px 20px rgba(12, 166, 120, 0.35);
+        }
+
+        /* Stop / Reset Button */
+        .reset-btn {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reset-btn:hover {
+            background: #e9ecef;
+            color: #343a40;
+            border-color: #ced4da;
+        }
+
+        /* Timer Badge */
+        #timer {
+            font-size: 18px;
+            font-weight: 600;
+            color: #495057;
+            margin: 5px 0 0;
+            background: #fff0f6;
+            color: #c2255c;
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 20px;
+            border: 1px solid #fcc2d7;
+            letter-spacing: 0.5px;
+        }
+
+        /* Popup overlay */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .popup.active {
+            opacity: 1;
+        }
+
+        .popup-box {
+            background: white;
+            width: 90%;
+            max-width: 440px;
+            padding: 35px 30px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.85);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #ffdeeb;
+            position: relative;
+        }
+
+        .popup.active .popup-box {
+            transform: scale(1);
+        }
+
+        .popup-emoji {
+            font-size: 65px;
+            line-height: 1;
+            margin-bottom: 5px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-10deg); }
+            40% { transform: rotate(10deg); }
+            60% { transform: rotate(-6deg); }
+            80% { transform: rotate(6deg); }
+        }
+
+        .popup-box h2 {
+            color: #d6336c;
+            font-size: 26px;
+            margin: 5px 0 15px;
+        }
+
+        .popup-message-malayalam {
+            font-family: 'Noto Sans Malayalam', 'Fredoka', Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2b2b2b;
+            line-height: 1.5;
+            margin: 10px 0 5px;
+        }
+
+        .popup-message-english {
+            font-size: 15px;
+            color: #777;
+            font-style: italic;
+            margin: 0 0 20px;
+        }
+
+        .popup-box button {
+            border: none;
+            padding: 13px 30px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #d6336c, #fa5252);
+            color: white;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(214, 51, 108, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .popup-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(214, 51, 108, 0.45);
+        }
+
+        .popup-box button:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 550px) {
+            .container {
+                padding: 30px 15px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .card {
+                width: 100%;
+                max-width: 280px;
+            }
+            .sticker {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Funny stickers -->
+        <div class="sticker s1">🌸</div>
+        <div class="sticker s2">😂</div>
+        <div class="sticker s3">📱</div>
+        <div class="sticker s4">💗</div>
+
+        <h1>👩‍🦱 The Amma Simulator</h1>
+
+        <p class="subtitle">
+            What happens when you use your phone too much? 😂
+        </p>
+
+        <!-- Characters -->
+        <div class="characters">
+
+            <div class="card">
+                <div class="emoji">👩‍🦱</div>
+                <h2>Amma</h2>
+                <p>Phone Police 👀</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👨‍🦱</div>
+                <h2>Son</h2>
+                <p>Professional Phone User 📱</p>
+            </div>
+
+        </div>
+
+        <!-- Interactive Controls -->
+        <div class="actions">
+            <div class="btn-group">
+                <button id="startBtn" class="start-btn" onclick="togglePhoneUsage()">
+                    📱 START USING PHONE
+                </button>
+                <button id="resetBtn" class="reset-btn" onclick="resetSimulator()" style="display: none;">
+                    🔄 Put Phone Away
+                </button>
+            </div>
+
+            <p id="timer">⏱️ Time: 0 seconds</p>
+        </div>
+
+    </div>
+
+    <!-- Amma Alert Modal Dialog -->
+    <div id="ammaPopup" class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle" onclick="handleBackdropClick(event)">
+        <div class="popup-box">
+            <div class="popup-emoji">👩‍🦱</div>
+            <h2 id="popupTitle">AMMA ALERT! 🚨</h2>
+            <div id="ammaMalayalam" class="popup-message-malayalam"></div>
+            <div id="ammaEnglish" class="popup-message-english"></div>
+            <button onclick="closeAmma()">OK AMMA 😭</button>
+        </div>
+    </div>
+
+    <!-- Simulator Logic -->
+    <script>
+        let seconds = 0;
+        let timerId = null;
+        let timerRunning = false;
+
+        // Amma's classic dialogues at specific time intervals
+        const ammaDialogues = {
+            10: {
+                malayalam: "👩 Amma: കണ്ണ് കേടാക്കാൻ ഒരുങ്ങിക്കോ…",
+                english: "“Get ready to ruin your eyes…”"
+            },
+            30: {
+                malayalam: "👩 Amma: ആ ഫോണിലോട്ട് തന്നെ ആണോ കേറിയിരിക്കുന്നത്!",
+                english: "“Are you literally sitting inside that phone?!”"
+            },
+            60: {
+                malayalam: "👩 Amma: ആ ഫോൺ എടുത്ത് തോട്ടിൽ കളഞ്ഞേക്കു!",
+                english: "“Go throw that phone in the canal!”"
+            },
+            90: {
+                malayalam: "👩 Amma: നിനക്ക് വേറെ ഒരു പണിയും ഇല്ലേ ഇതിലും വലുത്?!",
+                english: "“Don't you have any other work to do?!”"
+            },
+            120: {
+                malayalam: "👩 Amma: ഇപ്പൊത്തന്നെ ഫോൺ താഴെ വെച്ചില്ലെങ്കിൽ ചൂല് വരും! 🧹💥",
+                english: "“Put it down right now or the broom is flying!”"
+            }
+        };
+
+        // Web Audio synthesized alert beep for funny reaction
+        function playAlertSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.35);
+            } catch (e) {
+                // Audio context not allowed before gesture or not supported
+            }
+        }
+
+        function togglePhoneUsage() {
+            if (timerRunning) {
+                // If running, pause
+                pauseSimulator();
+            } else {
+                // Start
+                startSimulator();
+            }
+        }
+
+        function startSimulator() {
+            timerRunning = true;
+            const startBtn = document.getElementById("startBtn");
+            const resetBtn = document.getElementById("resetBtn");
+
+            startBtn.classList.add("running");
+            startBtn.innerHTML = "⏸️ PAUSE PHONE";
+            resetBtn.style.display = "inline-flex";
+
+            timerId = setInterval(function() {
+                seconds++;
+                document.getElementById("timer").innerText = "⏱️ Time: " + seconds + " seconds";
+
+                // Check for Amma's reaction at this second
+                if (ammaDialogues[seconds]) {
+                    showAmma(ammaDialogues[seconds].malayalam, ammaDialogues[seconds].english);
+                }
+            }, 1000);
+        }
+
+        function pauseSimulator() {
+            timerRunning = false;
+            clearInterval(timerId);
+            const startBtn = document.getElementById("startBtn");
+            startBtn.classList.remove("running");
+            startBtn.innerHTML = "📱 RESUME PHONE";
+        }
+
+        function resetSimulator() {
+            timerRunning = false;
+            clearInterval(timerId);
+            seconds = 0;
+            document.getElementById("timer").innerText = "⏱️ Time: 0 seconds";
+
+            const startBtn = document.getElementById("startBtn");
+            const resetBtn = document.getElementById("resetBtn");
+            startBtn.classList.remove("running");
+            startBtn.innerHTML = "📱 START USING PHONE";
+            resetBtn.style.display = "none";
+        }
+
+        function showAmma(malayalam, english) {
+            playAlertSound();
+            document.getElementById("ammaMalayalam").innerText = malayalam;
+            document.getElementById("ammaEnglish").innerText = english || "";
+            
+            const popup = document.getElementById("ammaPopup");
+            popup.style.display = "flex";
+            // Allow display change to register before triggering CSS opacity transition
+            setTimeout(function() {
+                popup.classList.add("active");
+            }, 10);
+        }
+
+        function closeAmma() {
+            const popup = document.getElementById("ammaPopup");
+            popup.classList.remove("active");
+            setTimeout(function() {
+                popup.style.display = "none";
+            }, 250);
+        }
+
+        function handleBackdropClick(event) {
+            // Close if clicking outside the popup box
+            if (event.target.id === "ammaPopup") {
+                closeAmma();
+            }
+        }
+
+        // Close popup on Escape key press
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                closeAmma();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
